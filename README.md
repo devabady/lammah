@@ -6,6 +6,10 @@
 
 *Built with React Native (Expo) · Next.js · PostgreSQL/PostGIS · Redis · Socket.IO*
 
+<br/>
+
+![Lammah promo](screenshots/promo-banner.webp)
+
 </div>
 
 ---
@@ -32,6 +36,14 @@ The core loop is deliberately short:
 
 ## Screenshots
 
+**On iPhone** (captured on a physical device — the app ships on both platforms):
+
+| Contacts | Chats & stories | Settings | Account |
+|:---:|:---:|:---:|:---:|
+| ![Contacts](screenshots/ios-01-contacts.jpg) | ![Chats](screenshots/ios-02-chats-story.jpg) | ![Settings](screenshots/ios-03-settings.jpg) | ![Account](screenshots/ios-04-account.jpg) |
+
+**On Android** (development build):
+
 | Launch | Live map | Gatherings |
 |:---:|:---:|:---:|
 | ![Splash](screenshots/02-splash-glow.png) | ![Map](screenshots/04-live-map.png) | ![Gatherings](screenshots/05-gatherings.png) |
@@ -40,7 +52,7 @@ The core loop is deliberately short:
 |:---:|:---:|:---:|
 | ![Contact sync](screenshots/06-contact-sync.png) | ![Invite](screenshots/07-contact-invite.png) | ![Settings](screenshots/08-settings.png) |
 
-*(Captured on the Android emulator during development. The small gear overlay is the Expo dev-client menu, not part of the app.)*
+*(The small gear overlay in the Android shots is the Expo dev-client menu, not part of the app.)*
 
 ---
 
