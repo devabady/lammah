@@ -139,29 +139,7 @@ Lammah/
 | Infra | Railway (API, socket, DB, Redis), EAS Build + Update, Expo push |
 | i18n | i18next, Arabic + English, full RTL |
 
----
 
-## Engineering stories worth telling
-
-These are the problems that didn't have a Stack Overflow answer.
-
-**1. The $155 Google Places bill.**
-A handful of beta testers panning the map burned ~8,000 paid API calls in six days. Root cause: a 9-type category fan-out, multiplied by radius tiers, on top of a 2-minute cache. The fix was architectural, not a band-aid. I built a **two-layer cache**: expensive external results are cached for 7 days per geohash cell (single-flighted so concurrent requests can't stampede), while our own sponsored venues merge in *fresh on every request* so a new sponsor appears instantly. The fan-out dropped to 4 core types, and a hard daily API quota now acts as a spend ceiling with budget alerts behind it. Result: Google gets called roughly once per area per week, the sponsored layer never goes stale, and the worst-case monthly cost is close to zero.
-
-**2. Voice notes that played locally but not in production.**
-Classic "works on my machine": senders replay their own clip from the local file, so nobody noticed the server URL was broken. The real bug: our media endpoint returned a plain `200` with no **HTTP Range** support, and `.m4a` keeps its `moov` index atom at the *end* of the file, so native players (ExoPlayer/AVPlayer) must range-seek before they can start. I implemented proper `206 Partial Content` (suffix ranges included) and playback came alive everywhere.
-
-**3. Read receipts without a per-message read table.**
-Instead of writing a receipt row per message per user (a write amplification nightmare), each participant carries two **watermarks**: `lastDeliveredAt` and `lastReadAt`, stamped with the *database's* clock to dodge API clock skew. A message's ✓✓ state is derived from the MIN watermark across other participants. WhatsApp-grade UX at O(participants) storage.
-
-**4. The upload freeze, twice.**
-Voice uploads first shipped as base64 JSON, and `JSON.stringify` on a megabyte-scale string visibly froze the JS thread. I moved to multipart… and React Native 0.85's bridgeless networking rejected the classic `FormData` file-part shape entirely. The final fix was a native streaming upload (`uploadAsync` multipart), which reads the file off the JS thread. I then wrapped it in an **optimistic outbox**: clips appear instantly, and failures stay visible with a retry affordance instead of silently vanishing.
-
-**5. The Android crash that only hit testers.**
-The app opened fine in dev but crashed instantly for testers. The Maps API key was missing from the *built* manifest: the react-native-maps config plugin **removes** the key when its own config field is unset, even if the key exists elsewhere. I found it by dumping the actual APK manifest (`aapt dump xmltree`) instead of trusting configuration. A lesson that stuck: verify the artifact, not the intent. I also added a keyless-guard fallback screen so a config regression can never crash-loop users again.
-
-**6. Arabic is a first-class citizen, and it fights back.**
-Cursive Arabic breaks if you apply `letterSpacing` (the letters disconnect), so the design system bans it on Arabic text. Native chrome (tab bars, headers, alerts) follows the OS appearance rather than the app theme, causing light/dark flicker; I solved that globally by syncing `Appearance.setColorScheme` with the in-app theme. RTL direction changes need a full reload to apply cleanly. None of this is in the docs. All of it is in the app.
 
 ---
 
